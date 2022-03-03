@@ -13,7 +13,7 @@ if [%backupType%]==[] (
 
 REM set paths to destination & backup scripts
 SET workingDir=%~dp0
-FOR %%a IN ("%workingDir:~0,-1%") DO SET destDir=%%~dpaBackup\
+FOR %%a IN ("%workingDir:~0,-1%") DO SET destDir=%%~dpaBackups\
 SET scriptReadFromIni=%workingDir%readFromIni.bat
 SET configPath=%workingDir%__config.ini
 
@@ -28,16 +28,28 @@ for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" Ba
 		echo		Paths should begin with "C:\"
 		GOTO END_FAILED
 	)
-	set sourcePaths=!sourcePaths! !p:~3!
+	IF /I "!p:~-1!" NEQ "\" (
+		set p=!p!\
+	)
+	IF NOT EXIST "!p!" (
+		echo error: !p!
+		echo		does not exist.
+		GOTO END_FAILED
+	)
+	set sourcePaths=!sourcePaths! !p!
 )
 
 REM remove trailing and leading spaces
 for /l %%a in (1,1,100) do if "!sourcePaths:~-1!"==" " set sourcePaths=!sourcePaths:~0,-1!
 
 REM show backup source list and backup type to the user
-echo backupType: %backupType%
-ECHO Backup source paths:
-FOR %%a IN (%sourcePaths%) DO echo 	%%a
+echo backup type: %backupType%
+ECHO backup source and destination paths:
+FOR %%a IN (%sourcePaths%) DO (
+	echo 	%%a
+	set p=%%a
+	echo 		-^> %destDir%C\!p:~3!
+)
 
 REM get confirmation from the user
 SET /P confirm="Continue? (y/[N])? "
@@ -54,8 +66,12 @@ SET logDest=%destDir%%logFilename%
 
 FOR %%a IN (%sourcePaths%) DO (
 
-	SET sourceDir=C:\%%a
-	SET destDirFull=%destDir%C\%%a
+	SET sourceDir=%%a
+
+	set relPath=%%a
+	set relPath=!relPath:~3!
+
+	SET destDirFull=!destDir!C\!relPath!
 	echo ------------------------------------------------------------------
 	echo --- src: !sourceDir!
 	echo --- dest: !destDirFull!
@@ -65,13 +81,13 @@ FOR %%a IN (%sourcePaths%) DO (
 	IF NOT EXIST "!destDirFull!" ( mkdir "!destDirFull!" )
 
 	IF /I "%backupType%" == "EVERYTHING" (
-		REM robocopy "%sourceDir%\" "%destDirFull%\" /e /is /it /tee /log:"%logDest%"
-		ECHO robocopy "%sourceDir%\" "%destDirFull%\" /e /is /it /tee /log:"%logDest%"
+		rem ECHO robocopy "!sourceDir!" "!destDirFull!" /e /is /it /tee /log:"!logDest!"
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /is /it /tee /log:"!logDest!"
 	)
 
 	IF /I "%backupType%" == "MODIFIED" (
-		REM robocopy "%dirSourcePublic%\" "%dirDestPublic%\" /e /m /tee /log:"%pathBackupLogPublic%"
-		ECHO robocopy "%dirSourcePublic%\" "%dirDestPublic%\" /e /m /tee /log:"%pathBackupLogPublic%"
+		rem ECHO robocopy "!dirSourcePublic!" "!dirDestPublic!" /e /m /tee /log:"!pathBackupLogPublic!"
+		robocopy "!dirSourcePublic!\" "!dirDestPublic!\" /e /m /tee /log:"!pathBackupLogPublic!"
 	)
 
 	echo:
