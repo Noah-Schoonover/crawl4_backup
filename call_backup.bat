@@ -13,11 +13,13 @@ if [%backupType%]==[] (
 
 REM set paths to destination & backup scripts
 SET workingDir=%~dp0
-FOR %%a IN ("%workingDir:~0,-1%") DO SET destDir=%%~dpaBackups\
 SET scriptReadFromIni=%workingDir%readFromIni.bat
 SET configPath=%workingDir%__config.ini
 
 REM get and store the settings from config file
+for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" BackupConfig systemID`) do (
+	set systemID=%%F)
+FOR %%a IN ("%workingDir:~0,-1%") DO SET destDir=%%~dpaBackup\
 REM get directory paths to backup ... sourcePaths initialized to empty string (stupid syntax)
 set sourcePaths=
 for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" BackupConfig sourcePath`) do (
@@ -81,13 +83,11 @@ FOR %%a IN (%sourcePaths%) DO (
 	IF NOT EXIST "!destDirFull!" ( mkdir "!destDirFull!" )
 
 	IF /I "%backupType%" == "EVERYTHING" (
-		rem ECHO robocopy "!sourceDir!" "!destDirFull!" /e /is /it /tee /log:"!logDest!"
 		robocopy "!sourceDir!\" "!destDirFull!\" /e /is /it /tee /log:"!logDest!"
 	)
 
 	IF /I "%backupType%" == "MODIFIED" (
-		rem ECHO robocopy "!dirSourcePublic!" "!dirDestPublic!" /e /m /tee /log:"!pathBackupLogPublic!"
-		robocopy "!dirSourcePublic!\" "!dirDestPublic!\" /e /m /tee /log:"!pathBackupLogPublic!"
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /m /tee /log:"!logDest!"
 	)
 
 	echo:
