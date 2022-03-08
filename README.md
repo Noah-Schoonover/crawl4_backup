@@ -1,10 +1,10 @@
 # Crawl4 Backup
 
-A backup utility for Windows that facilitates `robocopy` calls from an `ini` file.
+A backup utility for Windows that facilitates `robocopy` calls according to an `ini` file.
 
 ## How to use (2 steps)
 
-1. Modify and save your `__config.ini` file. Example contents:
+### 1. Modify and save your `__config.ini` file. Example contents:
 
 ```
 [BackupConfig]
@@ -24,7 +24,7 @@ sourcePath=C:\Users\noah\Desktop
 	likely cause errors.
 - All source paths must be absolute, beginning with C:\
 
-2. Run `_backup EVERYTHING.bat` or `_backup MODIFIED`
+### 2. Run `_backup EVERYTHING.bat` or `_backup MODIFIED`
 
 - The backup will be generated in the utility's parent directory.
 - `_backup EVERYTHING` will blindly copy all source paths to their destinations.
@@ -34,3 +34,5 @@ sourcePath=C:\Users\noah\Desktop
 ## Notes
 
 -
+
+## Known Bugs and Future Improvements
