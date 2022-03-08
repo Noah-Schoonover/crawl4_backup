@@ -28,7 +28,8 @@ sourcePath=C:\Users\noah\Desktop
 
 ### 2. Run `_backup EVERYTHING.bat` or `_backup MODIFIED`
 
-- The backup will be generated in the utility's parent directory.
+- The backup will be generated in the utility's parent directory in a folder named
+	`<systemID> backup`.
 - `_backup EVERYTHING` will blindly copy all source paths to their destinations.
 - `_backup MODIFIED` will only copy modified files by checking the `archive bit`.
 - In some cases, you may have to run the script with administrative privileges.
