@@ -4,7 +4,9 @@ A backup utility for Windows that facilitates `robocopy` calls according to an `
 
 ## How to use (2 steps)
 
-### 1. Modify and save your `__config.ini` file. Example contents:
+### 1. Modify and save your `__config.ini` file.
+
+Example contents:
 
 ```
 [BackupConfig]
