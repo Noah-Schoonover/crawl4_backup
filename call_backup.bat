@@ -5,44 +5,51 @@ REM robocopy /e option copies all subdirectories including empty ones
 
 setlocal enableextensions enabledelayedexpansion
 
+rem checks for argument (todo: verify argument is valid)
 set backupType=%~1
 if [%backupType%]==[] (
 	echo Missing arguments. Usage described in README file.
 	goto END_FAILED
 )
 
-REM set paths to destination & backup scripts
+REM set paths to workingDir, ini file, and ini file reader script
 SET workingDir=%~dp0
+FOR %%a IN ("%workingDir:~0,-1%") DO SET workingDirParent=%%~dpa
 SET scriptReadFromIni=%workingDir%readFromIni.bat
 SET configPath=%workingDir%__config.ini
 
-REM get and store the settings from config file
+REM get systemID from config file
 for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" BackupConfig systemID`) do (
-	set systemID=%%F)
-FOR %%a IN ("%workingDir:~0,-1%") DO SET destDir=%%~dpaBackup\
+	set systemID=%%F
+)
+
+rem set destination path
+set destDir=%workingDirParent%backup %systemID%\
+
 REM get directory paths to backup ... sourcePaths initialized to empty string (stupid syntax)
 set sourcePaths=
 for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" BackupConfig sourcePath`) do (
 	set p=%%F
+	rem verify that source path is absolute
 	IF /I "!p:~0,3!" NEQ "C:\" (
 		echo error: !p!
 		echo		is not a full path.
 		echo		Paths should begin with "C:\"
 		GOTO END_FAILED
 	)
+	rem fix paths without trailing backslash
 	IF /I "!p:~-1!" NEQ "\" (
 		set p=!p!\
 	)
+	rem verify that source path exists
 	IF NOT EXIST "!p!" (
 		echo error: !p!
 		echo		does not exist.
 		GOTO END_FAILED
 	)
+	rem add source path to list
 	set sourcePaths=!sourcePaths! !p!
 )
-
-REM remove trailing and leading spaces
-for /l %%a in (1,1,100) do if "!sourcePaths:~-1!"==" " set sourcePaths=!sourcePaths:~0,-1!
 
 REM show backup source list and backup type to the user
 echo backup type: %backupType%
