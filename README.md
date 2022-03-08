@@ -38,6 +38,12 @@ sourcePath=C:\Users\noah\Desktop
 
 -
 
-## Known Bugs and Future Improvements
+## Known Bugs
 
--
+- Must run the scripts as administrator to copy certain files/links
+
+## Future Improvements
+
+- ability to exclude directories
+- mirror copies that will remove files/directories that no longer exist in the source
+- more error checking and whitespace handling
