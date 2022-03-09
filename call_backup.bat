@@ -18,11 +18,14 @@ rem         access to, assuming it's being run under an account with sufficient 
 setlocal enableextensions enabledelayedexpansion
 
 rem checks for argument (todo: verify argument is valid)
-set backupType=%~1
-if [%backupType%]==[] (
+set backupMode=%~1
+if [%backupMode%]==[] (
 	echo Missing arguments. Usage described in README file.
 	goto END_FAILED
 )
+IF /I "!backupMode!" EQ "EVERYTHING" set backupType=persistent
+IF /I "!backupMode!" EQ "MODIFIED" set backupType=persistent
+IF /I "!backupMode!" EQ "MIRROR" set backupType=mirror
 
 REM set paths to workingDir, ini file, and ini file reader script
 SET workingDir=%~dp0
@@ -36,7 +39,7 @@ for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" Ba
 )
 
 rem set destination path
-set destDir=%workingDirParent%backup %systemID%\
+set destDir=%workingDirParent%backup %systemID% %backupType%\
 
 REM get directory paths to backup ... sourcePaths initialized to empty string (stupid syntax)
 set sourcePaths=
@@ -64,7 +67,7 @@ for /f "tokens=* USEBACKQ" %%F in (`call "%scriptReadFromIni%" "%configPath%" Ba
 )
 
 REM show backup source list and backup type to the user
-echo backup type: %backupType%
+echo backup type: %backupMode%
 ECHO backup source and destination paths:
 FOR %%a IN (%sourcePaths%) DO (
 	echo 	%%a
@@ -101,16 +104,16 @@ FOR %%a IN (%sourcePaths%) DO (
 	REM create folder structure for destination
 	IF NOT EXIST "!destDirFull!" ( mkdir "!destDirFull!" )
 
-	IF /I "%backupType%" == "EVERYTHING" (
+	IF /I "%backupMode%" == "EVERYTHING" (
 		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /is /it /tee /log:"!logDest!"
 	)
 
-	IF /I "%backupType%" == "MODIFIED" (
+	IF /I "%backupMode%" == "MODIFIED" (
 		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /m /tee /log:"!logDest!"
 	)
 
-	IF /I "%backupType%" == "MIRROR" (
-		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /mir /tee /log:"!logDest!"
+	IF /I "%backupMode%" == "MIRROR" (
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /mir /it /tee /log:"!logDest!"
 	)
 
 	echo:

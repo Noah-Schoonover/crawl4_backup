@@ -31,12 +31,14 @@ sourcePath=C:\Users\noah\Desktop
 - The backup will be generated in the utility's parent directory in a folder named
 	`<systemID> backup`.
 - `_backup EVERYTHING` will blindly copy all source paths to their destinations.
-- `_backup MODIFIED` will only copy modified files by checking the `archive bit`.
+- `_backup MODIFIED` will only copy modified files by checking the `archive bit`. Will not purge
+	deleted files.
+- `_backup MIRROR` mirrors a directory tree, will purge deleted files.
 - In some cases, you may have to run the script with administrative privileges.
 
 ## Notes
 
--
+- 
 
 ## Known Bugs
 
