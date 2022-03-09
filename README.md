@@ -29,16 +29,17 @@ sourcePath=C:\Users\noah\Desktop
 ### 2. Run `_backup EVERYTHING.bat` or `_backup MODIFIED`
 
 - The backup will be generated in the utility's parent directory in a folder named
-	`<systemID> backup`.
+	`<systemID> backup <backupType>`.
 - `_backup EVERYTHING` will blindly copy all source paths to their destinations.
+	(`backupType = persistent`)
 - `_backup MODIFIED` will only copy modified files by checking the `archive bit`. Will not purge
-	deleted files.
-- `_backup MIRROR` mirrors a directory tree, will purge deleted files.
+	deleted files. (`backupType = persistent`)
+- `_backup MIRROR` mirrors a directory tree, will purge deleted files. (`backupType = mirror`)
 - In some cases, you may have to run the script with administrative privileges.
 
 ## Notes
 
-- 
+-
 
 ## Known Bugs
 
