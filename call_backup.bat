@@ -1,7 +1,19 @@
 @echo off
 
-REM robocopy /m option only copies files with Archive bit set and then resets the Archive bit
-REM robocopy /e option copies all subdirectories including empty ones
+rem robocopy options
+REM /m 		only copies files with Archive bit set and then resets the Archive bit
+REM /e  	copies all subdirectories including empty ones
+rem /it 	Includes tweaked files.
+rem /is 	Includes the same files.
+rem /tee 	Writes the status output to the console window, as well as to the log file.
+rem /MT[:n] Creates multi-threaded copies with n threads. n must be an integer between 1 and 128.
+rem 		The default value for n is 8. For better performance, redirect your output using /log option.
+rem /mir 	Mirrors a directory tree (equivalent to /e plus /purge).
+rem         Using this option with the /e option and a destination directory, overwrites the
+rem         destination directory security settings.
+rem /b 	    Copies files in backup mode. Backup mode allows Robocopy to override file and folder
+rem         permission settings (ACLs). This allows you to copy files you might otherwise not have
+rem         access to, assuming it's being run under an account with sufficient privileges.
 
 setlocal enableextensions enabledelayedexpansion
 
@@ -90,11 +102,15 @@ FOR %%a IN (%sourcePaths%) DO (
 	IF NOT EXIST "!destDirFull!" ( mkdir "!destDirFull!" )
 
 	IF /I "%backupType%" == "EVERYTHING" (
-		robocopy "!sourceDir!\" "!destDirFull!\" /e /is /it /tee /log:"!logDest!"
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /is /it /tee /log:"!logDest!"
 	)
 
 	IF /I "%backupType%" == "MODIFIED" (
-		robocopy "!sourceDir!\" "!destDirFull!\" /e /m /tee /log:"!logDest!"
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /m /tee /log:"!logDest!"
+	)
+
+	IF /I "%backupType%" == "MIRROR" (
+		robocopy "!sourceDir!\" "!destDirFull!\" /e /mt /mir /tee /log:"!logDest!"
 	)
 
 	echo:
