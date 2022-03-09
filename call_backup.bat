@@ -23,10 +23,11 @@ if [%backupMode%]==[] (
 	echo Missing arguments. Usage described in README file.
 	goto END_FAILED
 )
-IF /I "!backupMode!" EQ "EVERYTHING" set backupType=persistent
-IF /I "!backupMode!" EQ "MODIFIED" set backupType=persistent
-IF /I "!backupMode!" EQ "MIRROR" set backupType=mirror
-
+pause
+IF /I "!backupMode!" == "EVERYTHING" set backupType=persistent
+IF /I "!backupMode!" == "MODIFIED" set backupType=persistent
+IF /I "!backupMode!" == "MIRROR" set backupType=mirror
+pause
 REM set paths to workingDir, ini file, and ini file reader script
 SET workingDir=%~dp0
 FOR %%a IN ("%workingDir:~0,-1%") DO SET workingDirParent=%%~dpa
